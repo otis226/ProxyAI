@@ -13,16 +13,19 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags="-w -s" -o 
 
 FROM alpine:latest
 
-RUN apk --no-cache add ca-certificates
+RUN apk --no-cache add ca-certificates bash
 
 WORKDIR /root/
 
+# Copy binary
 COPY --from=builder /app/cli-proxy-api .
 
-RUN mkdir -p /root/.cli-proxy-api
+# Copy entrypoint
+COPY docker-entrypoint.sh /root/docker-entrypoint.sh
+RUN chmod +x /root/docker-entrypoint.sh
 
 ENV PORT=8317
 
 EXPOSE 8317
 
-CMD sh -c 'echo "$CONFIG_YAML" > /root/config.yaml && ./cli-proxy-api --config /root/config.yaml'
+ENTRYPOINT ["/root/docker-entrypoint.sh"]
