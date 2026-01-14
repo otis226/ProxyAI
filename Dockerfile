@@ -25,4 +25,4 @@ ENV PORT=8317
 
 EXPOSE 8317
 
-CMD ["./cli-proxy-api", "--config", "/root/config.yaml"]
+CMD sh -c 'echo "$CONFIG_YAML" > /root/config.yaml && ./cli-proxy-api --config /root/config.yaml'
